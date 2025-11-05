@@ -1,0 +1,57 @@
+
+.row {
+    height: 100px;
+    width: 900px;
+    padding: 0;
+    display: flex;
+    border: 0;
+    
+}
+.box {
+    width: 98px;
+    height: 98px;
+    border: 1px;
+    border-style: solid;
+    border-color: grey;
+    padding: 0;
+    min-width: 98px;
+    max-width: 98px;
+    
+    
+}
+#table{
+    border: 1px;
+    border-color: grey;
+    border-style: solid;
+    display: flex;
+    width: fit-content;
+}
+
+#outline{
+    border: 2px;
+    border-style: solid;
+    display: flex;
+    width: fit-content;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+
+}
+.outline-row{
+    height: 300px;
+    width: 900px;
+    padding: 0;
+    display: flex;
+    border: 0;
+}
+.outline-box {
+    width: 296px;
+    height: 296px;
+    border: 2px;
+    border-style: solid;
+    padding: 0;
+    min-width: 296px;
+    max-width: 296px;
+    
+    
+}

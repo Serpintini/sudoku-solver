@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+{% load static %}
+<head>
+    <title>Sudoku Solver</title>
+    <link id="css_choice" rel="stylesheet" href="{% static '/solver/page.css' %}">
+
+</head>
+<body>
+    <table id="table">
+        {% for i in num %}
+            <tr class="row">
+                {% for j in num %}
+                    <td class="box"></td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+    <table id = "outline">
+        <tr class="outline-row">
+            <td class="outline-box"></td>
+            <td class="outline-box"></td>
+            <td class="outline-box"></td>
+        </tr>
+        <tr class="outline-row">
+            <td class="outline-box"></td>
+            <td class="outline-box"></td>
+            <td class="outline-box"></td>
+        </tr>
+        <tr class="outline-row">
+            <td class="outline-box"></td>
+            <td class="outline-box"></td>
+            <td class="outline-box"></td>
+        </tr>
+    </table>
+    
+    
+</body>

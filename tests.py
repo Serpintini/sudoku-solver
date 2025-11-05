@@ -16,7 +16,7 @@ class TestPuzzle(TestCase):
         self.me.puzzle[(2, 1)].value = 8
         self.me.puzzle[(5, 1)].value = 6
         self.me.puzzle[(6, 1)].value = 7
-        self.me.puzzle[(8, 1)].value = 2
+        self.me.puzzle[(7, 1)].value = 2
 
         self.me.puzzle[(4, 2)].value = 9
         self.me.puzzle[(5, 2)].value = 8
@@ -26,7 +26,7 @@ class TestPuzzle(TestCase):
         self.me.puzzle[(9, 2)].value = 1
 
         self.me.puzzle[(1, 3)].value = 2
-        self.me.puzzle[(2, 3)].value = 1
+        self.me.puzzle[(3, 3)].value = 1
         self.me.puzzle[(7, 3)].value = 9
 
         self.me.puzzle[(2, 4)].value = 9

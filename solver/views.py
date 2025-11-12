@@ -183,8 +183,87 @@ class Solver():
                 self.pretty_print()
                 break
 
+    def format_canidates(self):
+        full_list = []
+        for y in range(1,10):
+            full_list.append([])
+            for x in range(1, 10):
+                full_list[y-1].append(self.puzzle[x, y].canidates)
+        
+        return full_list
+    
+    def format_values(self):
+        full_list = []
+        for y in range(1,10):
+            full_list.append([])
+            for x in range(1, 10):
+                full_list[y-1].append(self.puzzle[x, y].value)
+        
+        return full_list
+    
+
+            
+class Erm():
+    def __init__(self):
+        self.me = Solver()
+
+        self.me.puzzle[(1, 1)].value = 5
+        self.me.puzzle[(2, 1)].value = 8
+        self.me.puzzle[(5, 1)].value = 6
+        self.me.puzzle[(6, 1)].value = 7
+        self.me.puzzle[(7, 1)].value = 2
+
+        self.me.puzzle[(4, 2)].value = 9
+        self.me.puzzle[(5, 2)].value = 8
+        self.me.puzzle[(6, 2)].value = 2
+        self.me.puzzle[(7, 2)].value = 5
+        self.me.puzzle[(8, 2)].value = 7
+        self.me.puzzle[(9, 2)].value = 1
+
+        self.me.puzzle[(1, 3)].value = 2
+        self.me.puzzle[(3, 3)].value = 1
+        self.me.puzzle[(7, 3)].value = 9
+
+        self.me.puzzle[(2, 4)].value = 9
+        self.me.puzzle[(4, 4)].value = 2
+        self.me.puzzle[(6, 4)].value = 4
+        self.me.puzzle[(7, 4)].value = 7
+        self.me.puzzle[(9, 4)].value = 8
+
+        self.me.puzzle[(1, 5)].value = 7
+        self.me.puzzle[(2, 5)].value = 3
+        self.me.puzzle[(8, 5)].value = 2
+        self.me.puzzle[(9, 5)].value = 5
+
+        self.me.puzzle[(2, 6)].value = 1
+        self.me.puzzle[(3, 6)].value = 2
+        self.me.puzzle[(4, 6)].value = 8
+        self.me.puzzle[(5, 6)].value = 7
+        self.me.puzzle[(9, 6)].value = 9
+
+        self.me.puzzle[(1, 7)].value = 1
+        self.me.puzzle[(3, 7)].value = 7
+        self.me.puzzle[(4, 7)].value = 5
+        self.me.puzzle[(7, 7)].value = 8
+
+        self.me.puzzle[(3, 8)].value = 6
+        self.me.puzzle[(5, 8)].value = 2
+        self.me.puzzle[(8, 8)].value = 4
+        self.me.puzzle[(9, 8)].value = 7
+
+        self.me.puzzle[(3, 9)].value = 3
+        self.me.puzzle[(7, 9)].value = 9
+
+        self.me.full_solve()
+
+
+
 def index(request):
     li = []
     for i in range(9):
         li.append('')
-    return render(request, "solver/index.html", {"num":li})
+    puzzle = Erm()
+    return render(request, "solver/index.html", {"num":li,
+    "canidates": puzzle.me.format_canidates(),
+    "values": puzzle.me.format_values(),
+    })

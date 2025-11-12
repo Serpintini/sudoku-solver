@@ -4,16 +4,21 @@
 <head>
     <title>Sudoku Solver</title>
     <link id="css_choice" rel="stylesheet" href="{% static '/solver/page.css' %}">
+    <script defer src="{% static '/solver/input.js' %}"></script>
 
 </head>
 <body>
     <table id="table">
         {% for i in num %}
+        {% with x=forloop.counter %}
             <tr class="row">
                 {% for j in num %}
-                    <td class="box"></td>
+                {% with y=forloop.counter %}
+                    <td class="box" id = "{{ x }}_{{ y }}"></td>
+                    {% endwith %}
                 {% endfor %}
             </tr>
+        {% endwith %}
         {% endfor %}
     </table>
     <table id = "outline">

@@ -1,5 +1,5 @@
 import time
-from django.shortcuts import render
+# from django.shortcuts import render
 
 class Cell():
     def __init__(self, x, y, value = 0):
@@ -135,6 +135,212 @@ class Solver():
                     change = True
         return change
 
+    def check_locked_canidates_1(self):
+        change = False
+        for b in range(1, 10):
+            for c in range(1,10):
+                row_can = []
+                col_can = []
+                row_bool = True
+                col_bool = True
+                for x in range(1, 10):
+                    for y in range(1, 10):
+                        if c in self.puzzle[(x, y)].canidates and self.puzzle[(x, y)].box == b:
+                            row_can.append(x)
+                            col_can.append(y)
+                for i in row_can:
+                    if i != row_can[0]:
+                        row_bool = False
+                for i in col_can:
+                    if i != col_can[0]:
+                        col_bool = False
+                
+                if row_bool and len(row_can) > 0:
+                    for x in range(1, 10):
+                        for y in range(1, 10):
+                            tar = self.puzzle[(x, y)]
+                            if c in tar.canidates and tar.box != b and tar.x == row_can[0]:
+                                tar.canidates.remove(c)
+                                print(f"Canidate {c} removed from cell {x}, {y}")
+                                print(f"reason: locked canidates 1")
+                                change = True
+                
+                if col_bool and len(col_can)>0:
+                    for x in range(1, 10):
+                        for y in range(1, 10):
+                            tar = self.puzzle[(x, y)]
+                            if c in tar.canidates and tar.box != b and tar.y == col_can[0]:
+                                tar.canidates.remove(c)
+                                print(f"Canidate {c} removed from cell {x}, {y}")
+                                print(f"reason: locked canidates 1")
+                                change = True
+        return change
+
+    def check_locked_canidates_2(self):
+        change = False
+        for r in range(1, 10):
+            for c in range(1, 10):
+                box_c = []
+                box_bool = True
+                for y in range(1, 10):
+                    if c in self.puzzle[(r, y)].canidates:
+                        box_c.append(self.puzzle[(r, y)].box)
+                
+                for i in box_c:
+                    if i != box_c[0]:
+                        box_bool = False
+
+                if box_bool and len(box_c) >0:
+                    for x in range(1, 10):
+                        for y in range(1, 10):
+                            tar = self.puzzle[(x, y)]
+                            if tar.box == box_c[0] and tar.x != r and c in tar.canidates:
+                                tar.canidates.remove(c)
+                                print(f"Canidate {c} removed from cell {x}, {y}")
+                                print(f"reason: locked canidates 2")
+                                change = True
+        for col in range(1, 10):
+                for c in range(1, 10):
+                    box_c = []
+                    box_bool = True
+                    for x in range(1, 10):
+                        if c in self.puzzle[(x, col)].canidates:
+                            box_c.append(self.puzzle[(x, col)].box)
+                    
+                    for i in box_c:
+                        if i != box_c[0]:
+                            box_bool = False
+
+                    if box_bool and len(box_c) > 0:
+                        for x in range(1, 10):
+                            for y in range(1, 10):
+                                tar = self.puzzle[(x, y)]
+                                if tar.box == box_c[0] and tar.y != col and c in tar.canidates:
+                                    tar.canidates.remove(c)
+                                    print(f"Canidate {c} removed from cell {x}, {y}")
+                                    print(f"reason: locked canidates 2")
+                                    change = True
+        return change
+        
+    def check_hidden_pair_triplet(self):
+        change = False
+        for r in range(1,10):
+            canidate_lists = {}
+            for c in range(1, 10):
+                canidate_lists[c] = []
+                for y in range(1,10):
+                    if c in self.puzzle[(r, y)].canidates:
+                        canidate_lists[c].append((r, y))
+            for c1 in list(canidate_lists.keys()):
+                for c2 in list(canidate_lists.keys()):
+                    if canidate_lists[c1] == canidate_lists[c2] and len(canidate_lists[c2]) == 2:
+                        for bc in canidate_lists[c1]:
+                            if self.puzzle[bc].canidates != [c1, c2]:
+                                self.puzzle[bc].canidates = [c1, c2]
+                                print(f"Removed canidates in box {bc}")
+                                print(f"Reason: hidden pair")
+                                change = True
+            for c1 in list(canidate_lists.keys()):
+                for c2 in list(canidate_lists.keys()):
+                    for c3 in list(canidate_lists.keys()):
+                        if len(list(set(canidate_lists[c1] + canidate_lists[c2] + canidate_lists[c3]))) == 3:
+                            for bc in canidate_lists[c1] + canidate_lists[c2] + canidate_lists[c3]:
+                                if list(set(self.puzzle[bc].canidates) - set([c1, c2, c3])) != []:
+                                    self.puzzle[bc].canidates = list(set(self.puzzle[bc].canidates)-(set(range(1,10))-set([c1, c2, c3])))
+                                    print(f"Removed canidates in box {bc}")
+                                    print(f"Reason: hidden triple")
+                                    change = True
+        for col in range(1,10):
+            canidate_lists = {}
+            for c in range(1, 10):
+                canidate_lists[c] = []
+                for x in range(1,10):
+                    if c in self.puzzle[(x, col)].canidates:
+                        canidate_lists[c].append((x, col))
+            for c1 in list(canidate_lists.keys()):
+                for c2 in list(canidate_lists.keys()):
+                    if canidate_lists[c1] == canidate_lists[c2] and len(canidate_lists[c2]) == 2:
+                        for bc in canidate_lists[c1]:
+                            if self.puzzle[bc].canidates != [c1, c2]:
+                                self.puzzle[bc].canidates = [c1, c2]
+                                print(f"Removed canidates in box {bc}")
+                                print(f"Reason: hidden pair")
+                                change = True
+            for c1 in list(canidate_lists.keys()):
+                for c2 in list(canidate_lists.keys()):
+                    for c3 in list(canidate_lists.keys()):
+                        if len(list(set(canidate_lists[c1] + canidate_lists[c2] + canidate_lists[c3]))) == 3:
+                            for bc in canidate_lists[c1] + canidate_lists[c2] + canidate_lists[c3]:
+                                if list(set(self.puzzle[bc].canidates) - set([c1, c2, c3])) != []:
+                                    self.puzzle[bc].canidates = list(set(self.puzzle[bc].canidates)-(set(range(1,10))-set([c1, c2, c3])))
+                                    print(f"Removed canidates in box {bc}")
+                                    print(f"Reason: hidden triple")
+                                    change = True
+        for box in range(1,10):
+            canidate_lists = {}
+            for c in range(1, 10):
+                canidate_lists[c] = []
+                for x in range(1,10):
+                    for y in range(1, 10):
+                        if c in self.puzzle[(x, y)].canidates and self.puzzle[(x, y)].box == box:
+                            canidate_lists[c].append((x, y))
+            for c1 in list(canidate_lists.keys()):
+                for c2 in list(canidate_lists.keys()):
+                    if canidate_lists[c1] == canidate_lists[c2] and len(canidate_lists[c2]) == 2:
+                        for bc in canidate_lists[c1]:
+                            if self.puzzle[bc].canidates != [c1, c2]:
+                                self.puzzle[bc].canidates = [c1, c2]
+                                print(f"Removed canidates in box {bc}")
+                                print(f"Reason: hidden pair")
+                                change = True
+            for c1 in list(canidate_lists.keys()):
+                for c2 in list(canidate_lists.keys()):
+                    for c3 in list(canidate_lists.keys()):
+                        if len(list(set(canidate_lists[c1] + canidate_lists[c2] + canidate_lists[c3]))) == 3:
+                            for bc in canidate_lists[c1] + canidate_lists[c2] + canidate_lists[c3]:
+                                if list(set(self.puzzle[bc].canidates) - set([c1, c2, c3])) != []:
+                                    self.bc.canidates = list(set(self.puzzle.bc.canidates)-(set(range(1,10))-set([c1, c2, c3])))
+                                    print(f"Removed canidates in box {bc}")
+                                    print(f"Reason: hidden triple")
+                                    change = True
+            
+
+                        
+    def check_naked_pair(self):
+        change = False
+        for x1 in range(1, 10):
+            for y1 in range(1, 10):
+                for x2 in range(1, 10):
+                    for y2 in range(1, 10):
+                        if (self.puzzle[(x1, y1)].canidates == self.puzzle[(x2, y2)].canidates and 
+                            len(self.puzzle[(x2, y2)].canidates) == 2 and (x1 != x2 or y1 != y2)):
+                            if x1 == x2:
+                                for y3 in range(1,10):
+                                    if list(set(self.puzzle[(x2, y3)].canidates)-set(self.puzzle[(x2, y2)].canidates)) != self.puzzle[(x2, y3)].canidates:
+                                        self.puzzle[(x2, y3)].canidates = list(set(self.puzzle[(x2, y3)].canidates)-set(self.puzzle[(x2, y2)].canidates))
+                                        print(f"Removed canidates in box {x2}, {y3}")
+                                        print(f"Reason: naked pair")
+                                        change = True
+
+                            if y1 == y2:
+                                for x3 in range(1,10):
+                                    if list(set(self.puzzle[(x3, y1)].canidates)-set(self.puzzle[(x2, y2)].canidates)) != self.puzzle[(x3, y1)].canidates:
+                                        self.puzzle[(x3, y1)].canidates = list(set(self.puzzle[(x3, y1)].canidates)-set(self.puzzle[(x2, y2)].canidates))
+                                        print(f"Removed canidates in box {x3}, {y1}")
+                                        print(f"Reason: naked pair")
+                                        change = True
+
+                            if self.puzzle[(x1, y1)].box == self.puzzle[(x2, y2)].box:
+                                for x3 in range(1,10):
+                                    for y3 in range(1,10):
+                                        if list(set(self.puzzle[(x3, y3)].canidates)-set(self.puzzle[(x2, y2)].canidates)) != self.puzzle[(x3, y3)].canidates:
+                                            self.puzzle[(x3, y3)].canidates = list(set(self.puzzle[(x3, y3)].canidates)-set(self.puzzle[(x2, y2)].canidates))
+                                            print(f"Removed canidates in box {x3}, {y3}")
+                                            print(f"Reason: naked pair")
+                                            change = True
+        return change
+
+
     def init_canidates(self):
         for x in range(1, 10):
             for y in range(1, 10):
@@ -166,17 +372,17 @@ class Solver():
         return count
 
     def full_solve(self):
-        self.pretty_print()
         self.init_canidates()
+        self.pretty_print()
         
-        print("9, 9 box " + str(self.puzzle[(9, 9)].box) )
+        
         time.sleep(1)
         while True:
             if self.count_done() == 81:
                 print("donzo")
                 self.pretty_print()
                 break
-            if self.check_for_hidden_single() or self.check_for_naked_single():
+            if self.check_for_hidden_single() or self.check_for_naked_single() or self.check_locked_canidates_1() or self.check_locked_canidates_2() or self.check_hidden_pair_triplet() or self.check_naked_pair():
                 pass
             else:
                 print("No new moves found")
@@ -255,15 +461,16 @@ class Erm():
         self.me.puzzle[(7, 9)].value = 9
 
         self.me.full_solve()
+        
 
 
 
-def index(request):
-    li = []
-    for i in range(9):
-        li.append('')
-    puzzle = Erm()
-    return render(request, "solver/index.html", {"num":li,
-    "canidates": puzzle.me.format_canidates(),
-    "values": puzzle.me.format_values(),
-    })
+# def index(request):
+#     li = []
+#     for i in range(9):
+#         li.append('')
+#     puzzle = Erm()
+#     return render(request, "solver/index.html", {"num":li,
+#     "canidates": puzzle.me.format_canidates(),
+#     "values": puzzle.me.format_values(),
+#     })
